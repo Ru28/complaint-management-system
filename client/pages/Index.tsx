@@ -37,23 +37,32 @@ export default function Index() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<FormData>({ resolver: zodResolver(schema), defaultValues: { role: "Citizen" } });
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { role: "Citizen" },
+  });
 
   const onSubmit = async (values: FormData) => {
     await new Promise((r) => setTimeout(r, 600));
-    toast.success("Account created", { description: `Welcome, ${values.name}` });
+    toast.success("Account created", {
+      description: `Welcome, ${values.name}`,
+    });
     reset();
   };
 
   return (
     <section className="container mx-auto px-4 py-12 grid lg:grid-cols-2 gap-10 items-center">
       <div className="space-y-6">
-        <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">Welcome to the CMS Portal</span>
+        <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+          Welcome to the CMS Portal
+        </span>
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
           Complaint Management System
         </h1>
         <p className="text-muted-foreground text-base md:text-lg max-w-prose">
-          Submit, track, and resolve complaints with transparency and speed. Create your account to raise complaints and monitor progress in real-time.
+          Submit, track, and resolve complaints with transparency and speed.
+          Create your account to raise complaints and monitor progress in
+          real-time.
         </p>
         <div className="flex flex-wrap gap-3">
           <Link to="/">
@@ -69,7 +78,9 @@ export default function Index() {
             <Button variant="outline">About Us</Button>
           </Link>
           <Link to="/contact">
-            <Button variant="link" className="px-0">Contact Us</Button>
+            <Button variant="link" className="px-0">
+              Contact Us
+            </Button>
           </Link>
         </div>
       </div>
@@ -78,48 +89,101 @@ export default function Index() {
         <form className="grid gap-5" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-2">
             <Label htmlFor="name">Full Name</Label>
-            <Input id="name" placeholder="Rupesh Virani" {...register("name")} />
-            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+            <Input
+              id="name"
+              placeholder="Rupesh Virani"
+              {...register("name")}
+            />
+            {errors.name && (
+              <p className="text-sm text-destructive">{errors.name.message}</p>
+            )}
           </div>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
-            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              {...register("email")}
+            />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email.message}</p>
+            )}
           </div>
           <div className="grid gap-2">
             <Label htmlFor="phone">Phone (optional)</Label>
-            <Input id="phone" type="tel" placeholder="+1 555 123 4567" {...register("phone")} />
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="+1 555 123 4567"
+              {...register("phone")}
+            />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="role">Role</Label>
-            <select id="role" className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" {...register("role")}>
+            <select
+              id="role"
+              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              {...register("role")}
+            >
               <option value="Citizen">Citizen</option>
               <option value="Employee">Employee</option>
             </select>
-            {errors.role && <p className="text-sm text-destructive">{errors.role.message}</p>}
+            {errors.role && (
+              <p className="text-sm text-destructive">{errors.role.message}</p>
+            )}
           </div>
           <div className="grid gap-2 md:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
-              {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                {...register("password")}
+              />
+              {errors.password && (
+                <p className="text-sm text-destructive">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="confirm">Confirm Password</Label>
-              <Input id="confirm" type="password" placeholder="••••••••" {...register("confirm")} />
-              {errors.confirm && <p className="text-sm text-destructive">{errors.confirm.message}</p>}
+              <Input
+                id="confirm"
+                type="password"
+                placeholder="••••••••"
+                {...register("confirm")}
+              />
+              {errors.confirm && (
+                <p className="text-sm text-destructive">
+                  {errors.confirm.message}
+                </p>
+              )}
             </div>
           </div>
           <label className="flex items-start gap-3 text-sm">
-            <input type="checkbox" className="mt-1 h-4 w-4 rounded border-input" {...register("terms")} />
+            <input
+              type="checkbox"
+              className="mt-1 h-4 w-4 rounded border-input"
+              {...register("terms")}
+            />
             <span>I agree to the terms and privacy policy.</span>
           </label>
-          {errors.terms && <p className="text-sm text-destructive">{errors.terms.message}</p>}
+          {errors.terms && (
+            <p className="text-sm text-destructive">{errors.terms.message}</p>
+          )}
 
           <Button type="submit" className="h-11" disabled={isSubmitting}>
             {isSubmitting ? "Creating account..." : "Create account"}
           </Button>
-          <p className="text-sm text-muted-foreground">Already have an account? <Link to="/login" className="text-primary hover:underline">Log in</Link></p>
+          <p className="text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link to="/login" className="text-primary hover:underline">
+              Log in
+            </Link>
+          </p>
         </form>
       </div>
     </section>

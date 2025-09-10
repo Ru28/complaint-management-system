@@ -18,7 +18,9 @@ function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-md bg-gradient-to-br from-indigo-500 to-cyan-500" />
-          <span className="text-lg font-semibold">Complaint Management System</span>
+          <span className="text-lg font-semibold">
+            Complaint Management System
+          </span>
         </Link>
         <nav className="hidden md:flex items-center gap-2">
           {navItems.map((item) => (
@@ -36,7 +38,9 @@ function Header() {
             </NavLink>
           ))}
           <Link to="/login">
-            <Button size="sm" className="ml-2">Login</Button>
+            <Button size="sm" className="ml-2">
+              Login
+            </Button>
           </Link>
         </nav>
         <button
@@ -44,7 +48,19 @@ function Header() {
           onClick={() => setOpen((v) => !v)}
           className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-input"
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
+          <svg
+            className="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
         </button>
       </div>
       {open && (
@@ -66,7 +82,9 @@ function Header() {
               </NavLink>
             ))}
             <Link to="/login" onClick={() => setOpen(false)}>
-              <Button size="sm" className="w-full">Login</Button>
+              <Button size="sm" className="w-full">
+                Login
+              </Button>
             </Link>
           </div>
         </div>
@@ -79,11 +97,20 @@ function Footer() {
   return (
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 py-8 grid gap-4 sm:flex sm:items-center sm:justify-between">
-        <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Complaint Management System. All rights reserved.</p>
+        <p className="text-sm text-muted-foreground">
+          © {new Date().getFullYear()} Complaint Management System. All rights
+          reserved.
+        </p>
         <div className="flex gap-4 text-sm text-muted-foreground">
-          <a href="/about" className="hover:text-foreground">About</a>
-          <a href="/contact" className="hover:text-foreground">Contact</a>
-          <a href="/track" className="hover:text-foreground">Track</a>
+          <a href="/about" className="hover:text-foreground">
+            About
+          </a>
+          <a href="/contact" className="hover:text-foreground">
+            Contact
+          </a>
+          <a href="/track" className="hover:text-foreground">
+            Track
+          </a>
         </div>
       </div>
     </footer>
