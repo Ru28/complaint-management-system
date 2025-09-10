@@ -1,62 +1,127 @@
-import { DemoResponse } from "@shared/api";
-import { useEffect, useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Link } from "react-router-dom";
+
+const schema = z
+  .object({
+    name: z.string().min(2, "Enter your full name"),
+    email: z.string().email("Enter a valid email"),
+    phone: z
+      .string()
+      .optional()
+      .transform((v) => (v ? v.trim() : v)),
+    role: z.enum(["Citizen", "Employee"], {
+      required_error: "Select a role",
+    }),
+    password: z.string().min(6, "Min 6 characters"),
+    confirm: z.string().min(6, "Confirm your password"),
+    terms: z.literal<boolean>(true, {
+      errorMap: () => ({ message: "You must accept the terms" }),
+    }),
+  })
+  .refine((data) => data.password === data.confirm, {
+    path: ["confirm"],
+    message: "Passwords do not match",
+  });
+
+type FormData = z.infer<typeof schema>;
 
 export default function Index() {
-  const [exampleFromServer, setExampleFromServer] = useState("");
-  // Fetch users on component mount
-  useEffect(() => {
-    fetchDemo();
-  }, []);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<FormData>({ resolver: zodResolver(schema), defaultValues: { role: "Citizen" } });
 
-  // Example of how to fetch data from the server (if needed)
-  const fetchDemo = async () => {
-    try {
-      const response = await fetch("/api/demo");
-      const data = (await response.json()) as DemoResponse;
-      setExampleFromServer(data.message);
-    } catch (error) {
-      console.error("Error fetching hello:", error);
-    }
+  const onSubmit = async (values: FormData) => {
+    await new Promise((r) => setTimeout(r, 600));
+    toast.success("Account created", { description: `Welcome, ${values.name}` });
+    reset();
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="text-center">
-        {/* TODO: FUSION_GENERATION_APP_PLACEHOLDER replace everything here with the actual app! */}
-        <h1 className="text-2xl font-semibold text-slate-800 flex items-center justify-center gap-3">
-          <svg
-            className="animate-spin h-8 w-8 text-slate-400"
-            viewBox="0 0 50 50"
-          >
-            <circle
-              className="opacity-30"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-            />
-            <circle
-              className="text-slate-600"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-              strokeDasharray="100"
-              strokeDashoffset="75"
-            />
-          </svg>
-          Generating your app...
+    <section className="container mx-auto px-4 py-12 grid lg:grid-cols-2 gap-10 items-center">
+      <div className="space-y-6">
+        <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">Welcome to the CMS Portal</span>
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+          Complaint Management System
         </h1>
-        <p className="mt-4 text-slate-600 max-w-md">
-          Watch the chat on the left for updates that might need your attention
-          to finish generating
+        <p className="text-muted-foreground text-base md:text-lg max-w-prose">
+          Submit, track, and resolve complaints with transparency and speed. Create your account to raise complaints and monitor progress in real-time.
         </p>
-        <p className="mt-4 hidden max-w-md">{exampleFromServer}</p>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/">
+            <Button variant="default">Home</Button>
+          </Link>
+          <Link to="/complaint">
+            <Button variant="secondary">Complaint form</Button>
+          </Link>
+          <Link to="/track">
+            <Button variant="ghost">Track Complaint</Button>
+          </Link>
+          <Link to="/about">
+            <Button variant="outline">About Us</Button>
+          </Link>
+          <Link to="/contact">
+            <Button variant="link" className="px-0">Contact Us</Button>
+          </Link>
+        </div>
       </div>
-    </div>
+
+      <div className="rounded-xl border bg-card shadow-xl p-6 md:p-8">
+        <form className="grid gap-5" onSubmit={handleSubmit(onSubmit)}>
+          <div className="grid gap-2">
+            <Label htmlFor="name">Full Name</Label>
+            <Input id="name" placeholder="Rupesh Virani" {...register("name")} />
+            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
+            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="phone">Phone (optional)</Label>
+            <Input id="phone" type="tel" placeholder="+1 555 123 4567" {...register("phone")} />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="role">Role</Label>
+            <select id="role" className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" {...register("role")}>
+              <option value="Citizen">Citizen</option>
+              <option value="Employee">Employee</option>
+            </select>
+            {errors.role && <p className="text-sm text-destructive">{errors.role.message}</p>}
+          </div>
+          <div className="grid gap-2 md:grid-cols-2">
+            <div className="grid gap-2">
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
+              {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="confirm">Confirm Password</Label>
+              <Input id="confirm" type="password" placeholder="••••••••" {...register("confirm")} />
+              {errors.confirm && <p className="text-sm text-destructive">{errors.confirm.message}</p>}
+            </div>
+          </div>
+          <label className="flex items-start gap-3 text-sm">
+            <input type="checkbox" className="mt-1 h-4 w-4 rounded border-input" {...register("terms")} />
+            <span>I agree to the terms and privacy policy.</span>
+          </label>
+          {errors.terms && <p className="text-sm text-destructive">{errors.terms.message}</p>}
+
+          <Button type="submit" className="h-11" disabled={isSubmitting}>
+            {isSubmitting ? "Creating account..." : "Create account"}
+          </Button>
+          <p className="text-sm text-muted-foreground">Already have an account? <Link to="/login" className="text-primary hover:underline">Log in</Link></p>
+        </form>
+      </div>
+    </section>
   );
 }
