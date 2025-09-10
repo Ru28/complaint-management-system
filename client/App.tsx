@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import About from "./pages/About";
 import Placeholder from "./pages/Placeholder";
 import Layout from "./components/site/Layout";
+import Complaint from "./pages/Complaint";
 
 const queryClient = new QueryClient();
 
@@ -26,15 +27,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/about" element={<About />} />
-            <Route
-              path="/complaint"
-              element={
-                <Placeholder
-                  title="Complaint Form"
-                  description="Start a new complaint. We will build this next."
-                />
-              }
-            />
+            <Route path="/complaint" element={<Complaint />} />
             <Route
               path="/track"
               element={
