@@ -113,10 +113,16 @@ export default function Index() {
       {isAuthenticated ? (
         <div className="rounded-xl border bg-card shadow-xl p-6 md:p-8">
           <h2 className="text-xl font-semibold">You are signed in</h2>
-          <p className="mt-2 text-muted-foreground">Raise a complaint or track an existing one.</p>
+          <p className="mt-2 text-muted-foreground">
+            Raise a complaint or track an existing one.
+          </p>
           <div className="mt-6 flex gap-3">
-            <Link to="/complaint"><Button>Complaint form</Button></Link>
-            <Link to="/track"><Button variant="secondary">Track Complaint</Button></Link>
+            <Link to="/complaint">
+              <Button>Complaint form</Button>
+            </Link>
+            <Link to="/track">
+              <Button variant="secondary">Track Complaint</Button>
+            </Link>
           </div>
         </div>
       ) : (
@@ -130,7 +136,9 @@ export default function Index() {
                 {...register("name")}
               />
               {errors.name && (
-                <p className="text-sm text-destructive">{errors.name.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.name.message}
+                </p>
               )}
             </div>
             <div className="grid gap-2">
@@ -142,7 +150,9 @@ export default function Index() {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
               )}
             </div>
             <div className="grid gap-2">
