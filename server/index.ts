@@ -1,10 +1,18 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { handleDemo } from "./routes/demo";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import accountsRoutes from "./routes/accountRouter";
+import complaintRoutes from "./routes/complaintRouter";
 
 export function createServer() {
+  dotenv.config();
   const app = express();
+
+  mongoose.connect(process.env.MONGO_URI)
+  .then(()=>console.log("Mongodb Connected"))
+  .catch((error)=>console.error("MongoDB connection error"));
 
   // Middleware
   app.use(cors());
@@ -17,7 +25,8 @@ export function createServer() {
     res.json({ message: ping });
   });
 
-  app.get("/api/demo", handleDemo);
+  app.use("/api/accounts", accountsRoutes);
+  app.use("/api/complaint", complaintRoutes);
 
   return app;
 }

@@ -119,20 +119,6 @@ export default function Index() {
               {...register("phone")}
             />
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="role">Role</Label>
-            <select
-              id="role"
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              {...register("role")}
-            >
-              <option value="Citizen">Citizen</option>
-              <option value="Employee">Employee</option>
-            </select>
-            {errors.role && (
-              <p className="text-sm text-destructive">{errors.role.message}</p>
-            )}
-          </div>
           <div className="grid gap-2 md:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
