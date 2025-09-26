@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 const schema = z
   .object({
@@ -41,13 +42,33 @@ export default function Index() {
     resolver: zodResolver(schema),
     defaultValues: { role: "Citizen" },
   });
+  const { setToken } = useAuth();
 
   const onSubmit = async (values: FormData) => {
-    await new Promise((r) => setTimeout(r, 600));
-    toast.success("Account created", {
-      description: `Welcome, ${values.name}`,
-    });
-    reset();
+    try {
+      const res = await fetch("/api/accounts/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: values.name,
+          email: values.email,
+          phoneNumber: values.phone,
+          role: values.role,
+          password: values.password,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({} as any));
+        throw new Error(err?.message || `Signup failed (${res.status})`);
+      }
+      const data = await res.json();
+      if (!data?.token) throw new Error("Token missing in response");
+      setToken(data.token);
+      toast.success("Account created", { description: `Welcome, ${values.name}` });
+      reset();
+    } catch (e: any) {
+      toast.error("Signup error", { description: e.message || "Something went wrong" });
+    }
   };
 
   return (
