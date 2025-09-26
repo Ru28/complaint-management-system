@@ -12,6 +12,7 @@ interface ComplaintItem {
   complaintDetail: string;
   complaintStatus: string;
   created: string;
+  resolution?: { response?: string } | null;
 }
 
 export default function Track() {
