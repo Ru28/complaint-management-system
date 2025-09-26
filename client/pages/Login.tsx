@@ -23,6 +23,7 @@ export default function Login() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
   const { setAuth } = useAuth();
+  const navigate = useNavigate();
 
   const onSubmit = async (values: FormData) => {
     try {
@@ -81,7 +82,7 @@ export default function Login() {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder="••••��•••"
               {...register("password")}
             />
             {errors.password && (
