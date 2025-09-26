@@ -7,21 +7,23 @@ export const fetchAllComplaints = async (req: Request, res: Response) => {
     const complaints = await Complaint.aggregate([
       {
         $lookup: {
-          from: "resolves", // collection name in MongoDB
-          localField: "_id", // Complaint _id
-          foreignField: "complaintId", // Resolve.complaintId
+          from: "resolves",
+          let: { cid: { $toString: "$_id" } },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$complaintId", "$$cid"] } } },
+            { $sort: { updated: -1 } },
+            { $limit: 1 },
+          ],
           as: "resolution",
         },
       },
       {
         $unwind: {
           path: "$resolution",
-          preserveNullAndEmptyArrays: true, // keep complaints even if no resolution
+          preserveNullAndEmptyArrays: true,
         },
       },
-      {
-        $sort: { created: -1 }, // latest complaints first
-      },
+      { $sort: { created: -1 } },
     ]);
 
     if (!complaints || complaints.length === 0) {
@@ -44,11 +46,10 @@ export const fetchAllComplaints = async (req: Request, res: Response) => {
   }
 };
 
-
 export const resolveComplaint = async (req: any, res: Response) => {
   try {
     const { complaintId } = req.query; // complaintId from query params
-    const { response } = req.body;     // response text from admin
+    const { response } = req.body; // response text from admin
 
     // ✅ Check role
     if (!req.user || req.user.role !== "admin") {
