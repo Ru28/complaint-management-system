@@ -72,7 +72,7 @@ export default function Track() {
               {c.complaintDetail}
             </p>
             {c.resolution?.response && (
-              <p className="mt-2 text-sm">Response: {c.resolution.response}</p>
+              <p className="mt-2 text-sm">Customer Support Response: {c.resolution.response}</p>
             )}
             <p className="mt-2 text-xs text-muted-foreground">
               {new Date(c.created).toLocaleString()}
