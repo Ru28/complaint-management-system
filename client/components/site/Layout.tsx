@@ -84,21 +84,25 @@ function Header() {
       {open && (
         <div className="md:hidden border-t bg-background">
           <div className="container mx-auto px-4 py-2 grid gap-1">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className={({ isActive }) =>
-                  cn(
-                    "px-2 py-2 rounded-md text-sm font-medium",
-                    isActive ? "text-primary" : "text-foreground/70",
-                  )
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
+            <NavLink to="/" onClick={()=>setOpen(false)} className={({isActive})=>cn("px-2 py-2 rounded-md text-sm font-medium", isActive?"text-primary":"text-foreground/70")}>
+              Home
+            </NavLink>
+            {isAuthenticated && (
+              isAdmin ? (
+                <NavLink to="/admin" onClick={()=>setOpen(false)} className={({isActive})=>cn("px-2 py-2 rounded-md text-sm font-medium", isActive?"text-primary":"text-foreground/70")}>
+                  Admin
+                </NavLink>
+              ) : (
+                <>
+                  <NavLink to="/complaint" onClick={()=>setOpen(false)} className={({isActive})=>cn("px-2 py-2 rounded-md text-sm font-medium", isActive?"text-primary":"text-foreground/70")}>
+                    Complaint form
+                  </NavLink>
+                  <NavLink to="/track" onClick={()=>setOpen(false)} className={({isActive})=>cn("px-2 py-2 rounded-md text-sm font-medium", isActive?"text-primary":"text-foreground/70")}>
+                    Track Complaint
+                  </NavLink>
+                </>
+              )
+            )}
             {isAuthenticated ? (
               <Button
                 size="sm"
