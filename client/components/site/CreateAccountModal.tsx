@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -23,7 +29,8 @@ export default function CreateAccountModal() {
         <DialogHeader>
           <DialogTitle>Account Ready</DialogTitle>
           <DialogDescription>
-            Your account has been created. You can now raise and track complaints.
+            Your account has been created. You can now raise and track
+            complaints.
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4 flex gap-3">

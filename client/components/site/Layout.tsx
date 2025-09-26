@@ -50,7 +50,9 @@ function Header() {
             </Button>
           ) : (
             <Link to="/login">
-              <Button size="sm" className="ml-2">Login</Button>
+              <Button size="sm" className="ml-2">
+                Login
+              </Button>
             </Link>
           )}
         </nav>
@@ -93,12 +95,21 @@ function Header() {
               </NavLink>
             ))}
             {isAuthenticated ? (
-              <Button size="sm" className="w-full" onClick={() => { setOpen(false); handleLogout(); }}>
+              <Button
+                size="sm"
+                className="w-full"
+                onClick={() => {
+                  setOpen(false);
+                  handleLogout();
+                }}
+              >
                 Logout
               </Button>
             ) : (
               <Link to="/login" onClick={() => setOpen(false)}>
-                <Button size="sm" className="w-full">Login</Button>
+                <Button size="sm" className="w-full">
+                  Login
+                </Button>
               </Link>
             )}
           </div>

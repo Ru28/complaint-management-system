@@ -29,18 +29,25 @@ export default function Login() {
       const res = await fetch("/api/accounts/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: values.email, password: values.password }),
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({} as any));
+        const err = await res.json().catch(() => ({}) as any);
         throw new Error(err?.message || `Login failed (${res.status})`);
       }
       const data = await res.json();
       if (!data?.token) throw new Error("Token missing in response");
       setToken(data.token);
-      toast.success("Logged in", { description: `Welcome back, ${values.email}` });
+      toast.success("Logged in", {
+        description: `Welcome back, ${values.email}`,
+      });
     } catch (e: any) {
-      toast.error("Login error", { description: e.message || "Something went wrong" });
+      toast.error("Login error", {
+        description: e.message || "Something went wrong",
+      });
     }
   };
 

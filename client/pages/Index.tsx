@@ -58,16 +58,20 @@ export default function Index() {
         }),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({} as any));
+        const err = await res.json().catch(() => ({}) as any);
         throw new Error(err?.message || `Signup failed (${res.status})`);
       }
       const data = await res.json();
       if (!data?.token) throw new Error("Token missing in response");
       setToken(data.token);
-      toast.success("Account created", { description: `Welcome, ${values.name}` });
+      toast.success("Account created", {
+        description: `Welcome, ${values.name}`,
+      });
       reset();
     } catch (e: any) {
-      toast.error("Signup error", { description: e.message || "Something went wrong" });
+      toast.error("Signup error", {
+        description: e.message || "Something went wrong",
+      });
     }
   };
 
