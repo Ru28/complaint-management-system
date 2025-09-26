@@ -5,6 +5,6 @@ const accountsRoutes = express.Router();
 
 accountsRoutes.post("/signup", signup);
 
-accountsRoutes.post("/login", login);
+accountsRoutes.post("/login",login);
 
 export default accountsRoutes;
