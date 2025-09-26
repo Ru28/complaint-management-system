@@ -13,6 +13,8 @@ import About from "./pages/About";
 import Placeholder from "./pages/Placeholder";
 import Layout from "./components/site/Layout";
 import Complaint from "./pages/Complaint";
+import Track from "./pages/Track";
+import Admin from "./pages/Admin";
 import { AuthProvider } from "@/context/AuthContext";
 import CreateAccountModal from "@/components/site/CreateAccountModal";
 
@@ -32,24 +34,9 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/about" element={<About />} />
               <Route path="/complaint" element={<Complaint />} />
-              <Route
-                path="/track"
-                element={
-                  <Placeholder
-                    title="Track Complaint"
-                    description="Enter your reference number to view status."
-                  />
-                }
-              />
-              <Route
-                path="/contact"
-                element={
-                  <Placeholder
-                    title="Contact Us"
-                    description="Get support or reach our team."
-                  />
-                }
-              />
+              <Route path="/track" element={<Track />} />
+              <Route path="/contact" element={<Placeholder title="Contact Us" description="Get support or reach our team." />} />
+              <Route path="/admin" element={<Admin />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

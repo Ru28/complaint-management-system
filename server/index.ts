@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import accountsRoutes from "./routes/accountRouter";
 import complaintRoutes from "./routes/complaintRouter";
+import adminRouter from "./routes/adminRouter";
 
 export function createServer() {
   dotenv.config();
@@ -27,6 +28,7 @@ export function createServer() {
 
   app.use("/api/accounts", accountsRoutes);
   app.use("/api/complaint", complaintRoutes);
+  app.use("/api/admin", adminRouter);
 
   return app;
 }
