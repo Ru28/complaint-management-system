@@ -45,6 +45,7 @@ export default function Login() {
       toast.success("Logged in", {
         description: `Welcome back, ${values.email}`,
       });
+      navigate("/");
     } catch (e: any) {
       toast.error("Login error", {
         description: e.message || "Something went wrong",
@@ -82,7 +83,7 @@ export default function Login() {
             <Input
               id="password"
               type="password"
-              placeholder="••••��•••"
+              placeholder="••••••••"
               {...register("password")}
             />
             {errors.password && (
