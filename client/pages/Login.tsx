@@ -22,7 +22,7 @@ export default function Login() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
-  const { setToken } = useAuth();
+  const { setAuth } = useAuth();
 
   const onSubmit = async (values: FormData) => {
     try {
@@ -40,7 +40,7 @@ export default function Login() {
       }
       const data = await res.json();
       if (!data?.token) throw new Error("Token missing in response");
-      setToken(data.token);
+      setAuth(data.token, data.user ?? null);
       toast.success("Logged in", {
         description: `Welcome back, ${values.email}`,
       });

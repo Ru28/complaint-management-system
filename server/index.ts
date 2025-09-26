@@ -5,14 +5,16 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import accountsRoutes from "./routes/accountRouter";
 import complaintRoutes from "./routes/complaintRouter";
+import adminRouter from "./routes/adminRouter";
 
 export function createServer() {
   dotenv.config();
   const app = express();
 
-  mongoose.connect(process.env.MONGO_URI)
-  .then(()=>console.log("Mongodb Connected"))
-  .catch((error)=>console.error("MongoDB connection error"));
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log("Mongodb Connected"))
+    .catch((error) => console.error("MongoDB connection error"));
 
   // Middleware
   app.use(cors());
@@ -27,6 +29,7 @@ export function createServer() {
 
   app.use("/api/accounts", accountsRoutes);
   app.use("/api/complaint", complaintRoutes);
+  app.use("/api/admin", adminRouter);
 
   return app;
 }
