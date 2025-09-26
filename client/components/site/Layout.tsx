@@ -1,7 +1,8 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   { to: "/", label: "Home" },
@@ -13,6 +14,12 @@ const navItems = [
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -37,11 +44,15 @@ function Header() {
               {item.label}
             </NavLink>
           ))}
-          <Link to="/login">
-            <Button size="sm" className="ml-2">
-              Login
+          {isAuthenticated ? (
+            <Button size="sm" className="ml-2" onClick={handleLogout}>
+              Logout
             </Button>
-          </Link>
+          ) : (
+            <Link to="/login">
+              <Button size="sm" className="ml-2">Login</Button>
+            </Link>
+          )}
         </nav>
         <button
           aria-label="Toggle navigation"
@@ -81,11 +92,15 @@ function Header() {
                 {item.label}
               </NavLink>
             ))}
-            <Link to="/login" onClick={() => setOpen(false)}>
-              <Button size="sm" className="w-full">
-                Login
+            {isAuthenticated ? (
+              <Button size="sm" className="w-full" onClick={() => { setOpen(false); handleLogout(); }}>
+                Logout
               </Button>
-            </Link>
+            ) : (
+              <Link to="/login" onClick={() => setOpen(false)}>
+                <Button size="sm" className="w-full">Login</Button>
+              </Link>
+            )}
           </div>
         </div>
       )}
