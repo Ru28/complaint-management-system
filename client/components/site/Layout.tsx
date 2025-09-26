@@ -134,9 +134,6 @@ function Footer() {
           <a href="/contact" className="hover:text-foreground">
             Contact
           </a>
-          <a href="/track" className="hover:text-foreground">
-            Track
-          </a>
         </div>
       </div>
     </footer>
