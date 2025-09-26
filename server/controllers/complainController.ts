@@ -28,21 +28,44 @@ export const raiseComplaint = async(req:any, res:any)=>{
    }
 }
 
-export const fetchComplaintByUser = async(req:any, res:any)=>{
-    try{
-        const userId=req.user.id;
-        const complaints= await Complaint.find({userId});
-        if (!complaints || complaints.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "No complaints found for this user",
-            });
-        }
+export const fetchComplaintByUser = async (req: any, res: any) => {
+  try {
+    const userId = req.user.id;
 
-        return res.status(200).json({success:true, data:complaints, message: "complaint data fetch successfully"});
+    const complaints = await Complaint.aggregate([
+      { $match: { userId } },
+      {
+        $lookup: {
+          from: "resolves",
+          let: { cid: { $toString: "$_id" } },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$complaintId", "$$cid"] } } },
+            { $sort: { updated: -1 } },
+            { $limit: 1 },
+          ],
+          as: "resolution",
+        },
+      },
+      {
+        $unwind: { path: "$resolution", preserveNullAndEmptyArrays: true },
+      },
+      { $sort: { created: -1 } },
+    ]);
+
+    if (!complaints || complaints.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No complaints found for this user",
+      });
     }
-    catch(error){
-       console.error("Error fetching complaints by user:", error.message);
-        return res.status(500).json({success: false,message: "Internal server error",});
-    }
-}
+
+    return res.status(200).json({
+      success: true,
+      data: complaints,
+      message: "complaint data fetch successfully",
+    });
+  } catch (error: any) {
+    console.error("Error fetching complaints by user:", error.message);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
