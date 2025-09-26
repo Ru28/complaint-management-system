@@ -1,32 +1,45 @@
 import Complaint from "../models/complaintSchema";
 
-
-export const raiseComplaint = async(req:any, res:any)=>{
-   try {
-    const { firstName,lastName, email, phoneNumber, complaintDetail} =req.body;
-    const userId=req.user.id;
-    if(!firstName || !lastName || !email || !phoneNumber || !complaintDetail){
-        return res.status(400).json({success:false, message: "firstName, lastName, email, phoneNumber and complainDetail required"});
+export const raiseComplaint = async (req: any, res: any) => {
+  try {
+    const { firstName, lastName, email, phoneNumber, complaintDetail } =
+      req.body;
+    const userId = req.user.id;
+    if (!firstName || !lastName || !email || !phoneNumber || !complaintDetail) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message:
+            "firstName, lastName, email, phoneNumber and complainDetail required",
+        });
     }
 
-    const raiseComplaint=new Complaint({
-        userId,
-        firstName,
-        lastName,
-        email,
-        phoneNumber,
-        complaintDetail,
-        complaintStatus: "unresolve",
-    })
+    const raiseComplaint = new Complaint({
+      userId,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      complaintDetail,
+      complaintStatus: "unresolve",
+    });
     await raiseComplaint.save();
-    
-    return res.status(201).json({success:false,data:raiseComplaint, message: "Complaint raised"});
-    
-   } catch (error) {
-     console.error("complaint raise to failed");
-     return res.status(500).json({success:false, message: "internal server error"});
-   }
-}
+
+    return res
+      .status(201)
+      .json({
+        success: false,
+        data: raiseComplaint,
+        message: "Complaint raised",
+      });
+  } catch (error) {
+    console.error("complaint raise to failed");
+    return res
+      .status(500)
+      .json({ success: false, message: "internal server error" });
+  }
+};
 
 export const fetchComplaintByUser = async (req: any, res: any) => {
   try {
@@ -66,6 +79,8 @@ export const fetchComplaintByUser = async (req: any, res: any) => {
     });
   } catch (error: any) {
     console.error("Error fetching complaints by user:", error.message);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };

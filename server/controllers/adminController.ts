@@ -46,11 +46,10 @@ export const fetchAllComplaints = async (req: Request, res: Response) => {
   }
 };
 
-
 export const resolveComplaint = async (req: any, res: Response) => {
   try {
     const { complaintId } = req.query; // complaintId from query params
-    const { response } = req.body;     // response text from admin
+    const { response } = req.body; // response text from admin
 
     // ✅ Check role
     if (!req.user || req.user.role !== "admin") {
