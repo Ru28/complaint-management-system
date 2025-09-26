@@ -30,30 +30,35 @@ function Header() {
           </span>
         </Link>
         <nav className="hidden md:flex items-center gap-2">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                cn(
-                  "px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-foreground/80",
-                  isActive ? "text-primary" : "text-foreground/70",
-                )
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
+          <NavLink to="/" className={({isActive})=>cn("px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-foreground/80", isActive?"text-primary":"text-foreground/70")}>
+            Home
+          </NavLink>
+          {isAuthenticated && (
+            isAdmin ? (
+              <NavLink to="/admin" className={({isActive})=>cn("px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-foreground/80", isActive?"text-primary":"text-foreground/70")}>
+                Admin
+              </NavLink>
+            ) : (
+              <>
+                <NavLink to="/complaint" className={({isActive})=>cn("px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-foreground/80", isActive?"text-primary":"text-foreground/70")}>
+                  Complaint form
+                </NavLink>
+                <NavLink to="/track" className={({isActive})=>cn("px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-foreground/80", isActive?"text-primary":"text-foreground/70")}>
+                  Track Complaint
+                </NavLink>
+              </>
+            )
+          )}
+          <NavLink to="/about" className={({isActive})=>cn("px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-foreground/80", isActive?"text-primary":"text-foreground/70")}>
+            About Us
+          </NavLink>
+          <NavLink to="/contact" className={({isActive})=>cn("px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-foreground/80", isActive?"text-primary":"text-foreground/70")}>
+            Contact Us
+          </NavLink>
           {isAuthenticated ? (
-            <Button size="sm" className="ml-2" onClick={handleLogout}>
-              Logout
-            </Button>
+            <Button size="sm" className="ml-2" onClick={handleLogout}>Logout</Button>
           ) : (
-            <Link to="/login">
-              <Button size="sm" className="ml-2">
-                Login
-              </Button>
-            </Link>
+            <Link to="/login"><Button size="sm" className="ml-2">Login</Button></Link>
           )}
         </nav>
         <button
