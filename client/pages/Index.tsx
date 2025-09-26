@@ -42,7 +42,7 @@ export default function Index() {
     resolver: zodResolver(schema),
     defaultValues: { role: "Citizen" },
   });
-  const { setToken } = useAuth();
+  const { setToken, isAuthenticated } = useAuth();
 
   const onSubmit = async (values: FormData) => {
     try {
@@ -110,93 +110,104 @@ export default function Index() {
         </div>
       </div>
 
-      <div className="rounded-xl border bg-card shadow-xl p-6 md:p-8">
-        <form className="grid gap-5" onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid gap-2">
-            <Label htmlFor="name">Full Name</Label>
-            <Input
-              id="name"
-              placeholder="Rupesh Virani"
-              {...register("name")}
-            />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name.message}</p>
-            )}
+      {isAuthenticated ? (
+        <div className="rounded-xl border bg-card shadow-xl p-6 md:p-8">
+          <h2 className="text-xl font-semibold">You are signed in</h2>
+          <p className="mt-2 text-muted-foreground">Raise a complaint or track an existing one.</p>
+          <div className="mt-6 flex gap-3">
+            <Link to="/complaint"><Button>Complaint form</Button></Link>
+            <Link to="/track"><Button variant="secondary">Track Complaint</Button></Link>
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            )}
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="phone">Phone (optional)</Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+1 555 123 4567"
-              {...register("phone")}
-            />
-          </div>
-          <div className="grid gap-2 md:grid-cols-2">
+        </div>
+      ) : (
+        <div className="rounded-xl border bg-card shadow-xl p-6 md:p-8">
+          <form className="grid gap-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="name">Full Name</Label>
               <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                {...register("password")}
+                id="name"
+                placeholder="Rupesh Virani"
+                {...register("name")}
               />
-              {errors.password && (
-                <p className="text-sm text-destructive">
-                  {errors.password.message}
-                </p>
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name.message}</p>
               )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="confirm">Confirm Password</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="confirm"
-                type="password"
-                placeholder="••••••••"
-                {...register("confirm")}
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                {...register("email")}
               />
-              {errors.confirm && (
-                <p className="text-sm text-destructive">
-                  {errors.confirm.message}
-                </p>
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email.message}</p>
               )}
             </div>
-          </div>
-          <label className="flex items-start gap-3 text-sm">
-            <input
-              type="checkbox"
-              className="mt-1 h-4 w-4 rounded border-input"
-              {...register("terms")}
-            />
-            <span>I agree to the terms and privacy policy.</span>
-          </label>
-          {errors.terms && (
-            <p className="text-sm text-destructive">{errors.terms.message}</p>
-          )}
+            <div className="grid gap-2">
+              <Label htmlFor="phone">Phone (optional)</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="+1 555 123 4567"
+                {...register("phone")}
+              />
+            </div>
+            <div className="grid gap-2 md:grid-cols-2">
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  {...register("password")}
+                />
+                {errors.password && (
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirm">Confirm Password</Label>
+                <Input
+                  id="confirm"
+                  type="password"
+                  placeholder="••••••••"
+                  {...register("confirm")}
+                />
+                {errors.confirm && (
+                  <p className="text-sm text-destructive">
+                    {errors.confirm.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <label className="flex items-start gap-3 text-sm">
+              <input
+                type="checkbox"
+                className="mt-1 h-4 w-4 rounded border-input"
+                {...register("terms")}
+              />
+              <span>I agree to the terms and privacy policy.</span>
+            </label>
+            {errors.terms && (
+              <p className="text-sm text-destructive">{errors.terms.message}</p>
+            )}
 
-          <Button type="submit" className="h-11" disabled={isSubmitting}>
-            {isSubmitting ? "Creating account..." : "Create account"}
-          </Button>
-          <p className="text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline">
-              Log in
-            </Link>
-          </p>
-        </form>
-      </div>
+            <Button type="submit" className="h-11" disabled={isSubmitting}>
+              {isSubmitting ? "Creating account..." : "Create account"}
+            </Button>
+            <p className="text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link to="/login" className="text-primary hover:underline">
+                Log in
+              </Link>
+            </p>
+          </form>
+        </div>
+      )}
     </section>
   );
 }
