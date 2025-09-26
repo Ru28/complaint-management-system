@@ -95,15 +95,27 @@ export default function Index() {
           </Link>
           {isAuthenticated && !isAdmin && (
             <>
-              <Link to="/complaint"><Button variant="secondary">Complaint form</Button></Link>
-              <Link to="/track"><Button variant="ghost">Track Complaint</Button></Link>
+              <Link to="/complaint">
+                <Button variant="secondary">Complaint form</Button>
+              </Link>
+              <Link to="/track">
+                <Button variant="ghost">Track Complaint</Button>
+              </Link>
             </>
           )}
           {isAuthenticated && isAdmin && (
-            <Link to="/admin"><Button variant="secondary">Admin Panel</Button></Link>
+            <Link to="/admin">
+              <Button variant="secondary">Admin Panel</Button>
+            </Link>
           )}
-          <Link to="/about"><Button variant="outline">About Us</Button></Link>
-          <Link to="/contact"><Button variant="link" className="px-0">Contact Us</Button></Link>
+          <Link to="/about">
+            <Button variant="outline">About Us</Button>
+          </Link>
+          <Link to="/contact">
+            <Button variant="link" className="px-0">
+              Contact Us
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -125,8 +137,14 @@ export default function Index() {
       ) : isAuthenticated && isAdmin ? (
         <div className="rounded-xl border bg-card shadow-xl p-6 md:p-8">
           <h2 className="text-xl font-semibold">Admin access</h2>
-          <p className="mt-2 text-muted-foreground">View and resolve all complaints.</p>
-          <div className="mt-6"><Link to="/admin"><Button>Go to Admin Panel</Button></Link></div>
+          <p className="mt-2 text-muted-foreground">
+            View and resolve all complaints.
+          </p>
+          <div className="mt-6">
+            <Link to="/admin">
+              <Button>Go to Admin Panel</Button>
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="rounded-xl border bg-card shadow-xl p-6 md:p-8">

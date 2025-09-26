@@ -11,9 +11,10 @@ export function createServer() {
   dotenv.config();
   const app = express();
 
-  mongoose.connect(process.env.MONGO_URI)
-  .then(()=>console.log("Mongodb Connected"))
-  .catch((error)=>console.error("MongoDB connection error"));
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log("Mongodb Connected"))
+    .catch((error) => console.error("MongoDB connection error"));
 
   // Middleware
   app.use(cors());

@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 interface ComplaintItem {
@@ -41,18 +47,30 @@ export default function Admin() {
     }
   };
 
-  useEffect(() => { if (isAuthenticated && isAdmin) fetchAll(); }, [isAuthenticated, isAdmin, token]);
+  useEffect(() => {
+    if (isAuthenticated && isAdmin) fetchAll();
+  }, [isAuthenticated, isAdmin, token]);
 
-  const openResolve = (id: string) => { setActiveId(id); setResponse(""); setOpen(true); };
+  const openResolve = (id: string) => {
+    setActiveId(id);
+    setResponse("");
+    setOpen(true);
+  };
 
   const submitResolve = async () => {
     if (!activeId || !token) return;
     try {
-      const res = await fetch(`/api/admin/resolve-complaint?complaintId=${encodeURIComponent(activeId)}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ response }),
-      });
+      const res = await fetch(
+        `/api/admin/resolve-complaint?complaintId=${encodeURIComponent(activeId)}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ response }),
+        },
+      );
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.message || `Failed (${res.status})`);
       toast.success("Complaint resolved");
@@ -80,12 +98,21 @@ export default function Admin() {
           <div key={c._id} className="rounded-lg border p-4 bg-card">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold">{c.firstName} {c.lastName} <span className="text-xs text-muted-foreground">({c.email})</span></h3>
+                <h3 className="font-semibold">
+                  {c.firstName} {c.lastName}{" "}
+                  <span className="text-xs text-muted-foreground">
+                    ({c.email})
+                  </span>
+                </h3>
                 <p className="text-xs text-muted-foreground">{c.phoneNumber}</p>
               </div>
-              <span className="text-xs px-2 py-1 rounded-full bg-secondary">{c.complaintStatus}</span>
+              <span className="text-xs px-2 py-1 rounded-full bg-secondary">
+                {c.complaintStatus}
+              </span>
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">{c.complaintDetail}</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {c.complaintDetail}
+            </p>
             {c.resolution?.response && (
               <p className="mt-2 text-sm">Response: {c.resolution.response}</p>
             )}
@@ -102,7 +129,9 @@ export default function Admin() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Resolution</DialogTitle>
-            <DialogDescription>Provide a response to this complaint.</DialogDescription>
+            <DialogDescription>
+              Provide a response to this complaint.
+            </DialogDescription>
           </DialogHeader>
           <textarea
             className="min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -111,7 +140,9 @@ export default function Admin() {
             onChange={(e) => setResponse(e.target.value)}
           />
           <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={submitResolve}>Submit</Button>
           </div>
         </DialogContent>

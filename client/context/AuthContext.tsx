@@ -60,7 +60,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAdmin = role === "admin";
 
   const value = useMemo(
-    () => ({ token, user, role, isAuthenticated, isAdmin, setAuth, setToken, logout }),
+    () => ({
+      token,
+      user,
+      role,
+      isAuthenticated,
+      isAdmin,
+      setAuth,
+      setToken,
+      logout,
+    }),
     [token, user, role, isAuthenticated, isAdmin],
   );
 

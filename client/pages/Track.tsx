@@ -42,7 +42,9 @@ export default function Track() {
   if (!isAuthenticated) {
     return (
       <section className="container mx-auto px-4 py-16">
-        <p className="text-muted-foreground">Please login to view your complaints.</p>
+        <p className="text-muted-foreground">
+          Please login to view your complaints.
+        </p>
       </section>
     );
   }
@@ -58,11 +60,19 @@ export default function Track() {
         {items?.map((c) => (
           <div key={c._id} className="rounded-lg border p-4 bg-card">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold">{c.firstName} {c.lastName}</h3>
-              <span className="text-xs px-2 py-1 rounded-full bg-secondary">{c.complaintStatus}</span>
+              <h3 className="font-semibold">
+                {c.firstName} {c.lastName}
+              </h3>
+              <span className="text-xs px-2 py-1 rounded-full bg-secondary">
+                {c.complaintStatus}
+              </span>
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">{c.complaintDetail}</p>
-            <p className="mt-2 text-xs text-muted-foreground">{new Date(c.created).toLocaleString()}</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {c.complaintDetail}
+            </p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {new Date(c.created).toLocaleString()}
+            </p>
           </div>
         ))}
       </div>
