@@ -71,6 +71,9 @@ export default function Track() {
             <p className="mt-2 text-sm text-muted-foreground">
               {c.complaintDetail}
             </p>
+            {c.resolution?.response && (
+              <p className="mt-2 text-sm">Response: {c.resolution.response}</p>
+            )}
             <p className="mt-2 text-xs text-muted-foreground">
               {new Date(c.created).toLocaleString()}
             </p>
