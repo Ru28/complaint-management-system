@@ -6,7 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const phoneRegex = /^[0-9+()\-\s]{7,20}$/;
 
@@ -20,9 +27,27 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+interface ComplaintItem {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  complaintDetail: string;
+  complaintStatus: string;
+  created: string;
+  resolution?: { response?: string } | null;
+}
+
 export default function Complaint() {
-  const { token } = useAuth();
-  const navigate = useNavigate();
+  const { token, isAuthenticated, isAdmin } = useAuth();
+  const [complaints, setComplaints] = useState<ComplaintItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [priorityFilter, setPriorityFilter] = useState("All Priority");
+  const [searchTerm, setSearchTerm] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -30,13 +55,32 @@ export default function Complaint() {
     reset,
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
+  const fetchComplaints = async () => {
+    if (!token) return;
+    try {
+      setLoading(true);
+      const endpoint = isAdmin
+        ? "/api/admin/all-complaints"
+        : "/api/complaint/myComplaint";
+      const res = await fetch(endpoint, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.message || `Failed (${res.status})`);
+      setComplaints(data.data || []);
+    } catch (e: any) {
+      toast.error("Failed to fetch complaints", { description: e.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) fetchComplaints();
+  }, [isAuthenticated, token]);
+
   const onSubmit = async (values: FormData) => {
     try {
-      if (!token) {
-        toast.error("Please login to raise a complaint");
-        navigate("/login");
-        return;
-      }
       const res = await fetch("/api/complaint/raiseComplaint", {
         method: "POST",
         headers: {
@@ -57,7 +101,8 @@ export default function Complaint() {
         description: data?.message || "Submitted successfully",
       });
       reset();
-      navigate("/track");
+      setShowForm(false);
+      fetchComplaints();
     } catch (e: any) {
       toast.error("Submission error", {
         description: e.message || "Something went wrong",
@@ -65,90 +110,203 @@ export default function Complaint() {
     }
   };
 
+  const filteredComplaints = complaints.filter((c) => {
+    const matchesSearch =
+      c.complaintDetail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.firstName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "All Status" ||
+      c.complaintStatus.toLowerCase() === statusFilter.toLowerCase();
+    return matchesSearch && matchesStatus;
+  });
+
   return (
-    <section className="container mx-auto px-4 py-16 max-w-3xl">
-      <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-        Complaint Form
-      </h1>
-      <p className="mt-3 text-muted-foreground">
-        Provide accurate details so we can resolve your issue quickly.
-      </p>
-
-      <form className="mt-8 grid gap-6" onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="grid gap-2">
-            <Label htmlFor="firstName">First name</Label>
-            <Input
-              id="firstName"
-              placeholder="First name"
-              {...register("firstName")}
-            />
-            {errors.firstName && (
-              <p className="text-sm text-destructive">
-                {errors.firstName.message}
-              </p>
-            )}
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="lastName">Last name</Label>
-            <Input
-              id="lastName"
-              placeholder="Last name"
-              {...register("lastName")}
-            />
-            {errors.lastName && (
-              <p className="text-sm text-destructive">
-                {errors.lastName.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="mobile">Mobile no</Label>
-          <Input
-            id="mobile"
-            type="tel"
-            placeholder="+1 555 123 4567"
-            {...register("mobile")}
-          />
-          {errors.mobile && (
-            <p className="text-sm text-destructive">{errors.mobile.message}</p>
-          )}
-        </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="details">Complaint Details</Label>
-          <textarea
-            id="details"
-            placeholder="Describe your issue with relevant dates, locations, or references."
-            className="min-h-[140px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            {...register("details")}
-          />
-          {errors.details && (
-            <p className="text-sm text-destructive">{errors.details.message}</p>
-          )}
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button type="submit" className="h-11" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit"}
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Complaints</h1>
+        {!isAdmin && (
+          <Button onClick={() => setShowForm(!showForm)}>
+            {showForm ? "Cancel" : "Create Complaint"}
           </Button>
+        )}
+      </div>
+
+      {showForm && !isAdmin && (
+        <div className="rounded-lg border bg-card p-6">
+          <h2 className="text-xl font-bold mb-6">Create Complaint</h2>
+          <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  placeholder="First name"
+                  {...register("firstName")}
+                />
+                {errors.firstName && (
+                  <p className="text-sm text-destructive">
+                    {errors.firstName.message}
+                  </p>
+                )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  placeholder="Last name"
+                  {...register("lastName")}
+                />
+                {errors.lastName && (
+                  <p className="text-sm text-destructive">
+                    {errors.lastName.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="mobile">Mobile Number</Label>
+              <Input
+                id="mobile"
+                type="tel"
+                placeholder="+1 555 123 4567"
+                {...register("mobile")}
+              />
+              {errors.mobile && (
+                <p className="text-sm text-destructive">
+                  {errors.mobile.message}
+                </p>
+              )}
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="details">Complaint Details</Label>
+              <textarea
+                id="details"
+                placeholder="Describe your issue with relevant dates, locations, or references."
+                className="min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                {...register("details")}
+              />
+              {errors.details && (
+                <p className="text-sm text-destructive">
+                  {errors.details.message}
+                </p>
+              )}
+            </div>
+
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Create"}
+            </Button>
+          </form>
         </div>
-      </form>
-    </section>
+      )}
+
+      {isAdmin && (
+        <div className="rounded-lg border bg-card p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <input
+              type="text"
+              placeholder="Search title/description"
+              className="flex-1 px-3 py-2 rounded-md border border-input bg-background text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All Status">All Status</SelectItem>
+                <SelectItem value="Open">Open</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Resolved">Resolved</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All Priority">All Priority</SelectItem>
+                <SelectItem value="Low">Low</SelectItem>
+                <SelectItem value="Medium">Medium</SelectItem>
+                <SelectItem value="High">High</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline">Filter</Button>
+          </div>
+        </div>
+      )}
+
+      {loading ? (
+        <p className="text-muted-foreground">Loading complaints...</p>
+      ) : filteredComplaints.length === 0 ? (
+        <div className="rounded-lg border bg-card p-6 text-center">
+          <p className="text-muted-foreground">
+            {isAdmin
+              ? "No complaints found."
+              : "No complaints yet. Create your first complaint to get started."}
+          </p>
+        </div>
+      ) : (
+        <div className="rounded-lg border bg-card overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/50">
+                <th className="text-left py-3 px-4 font-semibold">ID</th>
+                <th className="text-left py-3 px-4 font-semibold">Title</th>
+                <th className="text-left py-3 px-4 font-semibold">Status</th>
+                <th className="text-left py-3 px-4 font-semibold">Priority</th>
+                {isAdmin && (
+                  <th className="text-left py-3 px-4 font-semibold">Owner</th>
+                )}
+                <th className="text-left py-3 px-4 font-semibold">Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredComplaints.map((c) => (
+                <tr key={c._id} className="border-b hover:bg-muted/30">
+                  <td className="py-3 px-4 text-primary font-semibold">
+                    {c._id.slice(0, 8)}
+                  </td>
+                  <td className="py-3 px-4 text-primary max-w-xs">
+                    {c.complaintDetail.slice(0, 40)}
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="px-2 py-1 rounded-full text-xs bg-secondary">
+                      {c.complaintStatus}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-xs text-muted-foreground">-</td>
+                  {isAdmin && (
+                    <td className="py-3 px-4 text-sm">
+                      {c.firstName} {c.lastName}
+                    </td>
+                  )}
+                  <td className="py-3 px-4 text-xs">
+                    {new Date(c.created).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 }
