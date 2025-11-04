@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Complaint from "../models/complaintSchema";
 import Resolve from "../models/ResolveSchema";
+import User from "../models/userSchema";
 
 export const fetchAllComplaints = async (req: Request, res: Response) => {
   try {
