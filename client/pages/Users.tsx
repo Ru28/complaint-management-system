@@ -104,7 +104,9 @@ export default function Users() {
                   <td className="py-3 px-4 text-xs">{user._id.slice(0, 8)}</td>
                   <td className="py-3 px-4">
                     <div>
-                      <p className="font-medium">{user.fullName || user.email}</p>
+                      <p className="font-medium">
+                        {user.fullName || user.email}
+                      </p>
                       {user.phoneNumber && (
                         <p className="text-xs text-muted-foreground">
                           {user.phoneNumber}
@@ -116,9 +118,7 @@ export default function Users() {
                   <td className="py-3 px-4">
                     <Select
                       defaultValue={user.role}
-                      onValueChange={(value) =>
-                        updateUserRole(user._id, value)
-                      }
+                      onValueChange={(value) => updateUserRole(user._id, value)}
                     >
                       <SelectTrigger className="w-24">
                         <SelectValue />

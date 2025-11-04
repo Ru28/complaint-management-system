@@ -155,11 +155,7 @@ export const updateUserRole = async (req: Request, res: Response) => {
       });
     }
 
-    const user = await User.findByIdAndUpdate(
-      id,
-      { role },
-      { new: true }
-    );
+    const user = await User.findByIdAndUpdate(id, { role }, { new: true });
 
     if (!user) {
       return res.status(404).json({

@@ -1,6 +1,11 @@
 import express from "express";
 import { authVerify } from "../middleware/authVerify";
-import { fetchAllComplaints, resolveComplaint, fetchAllUsers, updateUserRole } from "../controllers/adminController";
+import {
+  fetchAllComplaints,
+  resolveComplaint,
+  fetchAllUsers,
+  updateUserRole,
+} from "../controllers/adminController";
 
 const adminRouter = express.Router();
 

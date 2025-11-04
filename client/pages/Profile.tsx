@@ -113,7 +113,9 @@ export default function Profile() {
             <span className="text-2xl">👤</span>
           </div>
           <div>
-            <h2 className="text-xl font-semibold">{user?.email?.split("@")[0] || "User"}</h2>
+            <h2 className="text-xl font-semibold">
+              {user?.email?.split("@")[0] || "User"}
+            </h2>
             <p className="text-sm text-muted-foreground">{user?.email}</p>
           </div>
         </div>

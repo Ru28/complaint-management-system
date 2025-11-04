@@ -73,7 +73,7 @@ export default function AuthenticatedLayout({
                       "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
                       isActive
                         ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-muted"
+                        : "text-muted-foreground hover:bg-muted",
                     )
                   }
                 >
@@ -116,7 +116,7 @@ export default function AuthenticatedLayout({
                     "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
                     isActive
                       ? "bg-primary text-primary-foreground"
-                      : "text-foreground/70 hover:bg-muted"
+                      : "text-foreground/70 hover:bg-muted",
                   )
                 }
               >

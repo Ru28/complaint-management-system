@@ -39,14 +39,20 @@ export default function Dashboard() {
             headers: { Authorization: `Bearer ${token}` },
           });
           const data = await res.json().catch(() => ({}));
-          if (!res.ok) throw new Error(data?.message || `Failed (${res.status})`);
+          if (!res.ok)
+            throw new Error(data?.message || `Failed (${res.status})`);
           const complaints = data.data || [];
           setRecentComplaints(complaints.slice(0, 5));
           const stats = {
             total: complaints.length,
-            open: complaints.filter((c: any) => c.complaintStatus === "Open").length,
-            inProgress: complaints.filter((c: any) => c.complaintStatus === "In Progress").length,
-            resolved: complaints.filter((c: any) => c.complaintStatus === "Resolved").length,
+            open: complaints.filter((c: any) => c.complaintStatus === "Open")
+              .length,
+            inProgress: complaints.filter(
+              (c: any) => c.complaintStatus === "In Progress",
+            ).length,
+            resolved: complaints.filter(
+              (c: any) => c.complaintStatus === "Resolved",
+            ).length,
           };
           setStats(stats);
         } else {
@@ -54,14 +60,20 @@ export default function Dashboard() {
             headers: { Authorization: `Bearer ${token}` },
           });
           const data = await res.json().catch(() => ({}));
-          if (!res.ok) throw new Error(data?.message || `Failed (${res.status})`);
+          if (!res.ok)
+            throw new Error(data?.message || `Failed (${res.status})`);
           const complaints = data.data || [];
           setRecentComplaints(complaints.slice(0, 5));
           const stats = {
             total: complaints.length,
-            open: complaints.filter((c: any) => c.complaintStatus === "Open").length,
-            inProgress: complaints.filter((c: any) => c.complaintStatus === "In Progress").length,
-            resolved: complaints.filter((c: any) => c.complaintStatus === "Resolved").length,
+            open: complaints.filter((c: any) => c.complaintStatus === "Open")
+              .length,
+            inProgress: complaints.filter(
+              (c: any) => c.complaintStatus === "In Progress",
+            ).length,
+            resolved: complaints.filter(
+              (c: any) => c.complaintStatus === "Resolved",
+            ).length,
           };
           setStats(stats);
         }
@@ -112,7 +124,9 @@ export default function Dashboard() {
             <h2 className="text-xl font-bold mb-4">Recent Complaints</h2>
             {recentComplaints.length === 0 ? (
               <p className="text-muted-foreground">
-                {isAdmin ? "No complaints yet." : "No complaints yet. Create your first complaint to get started."}
+                {isAdmin
+                  ? "No complaints yet."
+                  : "No complaints yet. Create your first complaint to get started."}
               </p>
             ) : (
               <div className="overflow-x-auto">
@@ -130,15 +144,21 @@ export default function Dashboard() {
                   <tbody>
                     {recentComplaints.map((c) => (
                       <tr key={c._id} className="border-b hover:bg-muted/50">
-                        <td className="py-2 px-2 text-primary font-semibold">{c._id.slice(0, 8)}</td>
-                        <td className="py-2 px-2 text-primary">{c.complaintDetail.slice(0, 30)}...</td>
+                        <td className="py-2 px-2 text-primary font-semibold">
+                          {c._id.slice(0, 8)}
+                        </td>
+                        <td className="py-2 px-2 text-primary">
+                          {c.complaintDetail.slice(0, 30)}...
+                        </td>
                         <td className="py-2 px-2">
                           <span className="px-2 py-1 rounded-full text-xs bg-secondary">
                             {c.complaintStatus}
                           </span>
                         </td>
                         <td className="py-2 px-2 text-xs">-</td>
-                        <td className="py-2 px-2 text-xs">{c.firstName} {c.lastName}</td>
+                        <td className="py-2 px-2 text-xs">
+                          {c.firstName} {c.lastName}
+                        </td>
                         <td className="py-2 px-2 text-xs">
                           {new Date(c.created).toLocaleDateString()}
                         </td>
