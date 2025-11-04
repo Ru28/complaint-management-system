@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, NavLink } from "react-router-dom";
+import { Link, useNavigate, NavLink, Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
@@ -21,7 +21,7 @@ const ADMIN_TABS = [
 export default function AuthenticatedLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   const { isAdmin, logout, user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
