@@ -110,3 +110,74 @@ export const resolveComplaint = async (req: any, res: Response) => {
     });
   }
 };
+
+export const fetchAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find({}, { password: 0 }).sort({ created: -1 });
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No users found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (error: any) {
+    console.error("Error fetching users:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const updateUserRole = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!id || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID and role are required",
+      });
+    }
+
+    const validRoles = ["Citizen", "Employee", "admin"];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role",
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { role },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User role updated successfully",
+      data: user,
+    });
+  } catch (error: any) {
+    console.error("Error updating user role:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
