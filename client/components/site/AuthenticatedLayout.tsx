@@ -148,7 +148,9 @@ export default function AuthenticatedLayout({
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto px-4 py-8">{children}</div>
+        <div className="container mx-auto px-4 py-8">
+          {children ? children : <Outlet />}
+        </div>
       </main>
     </div>
   );
