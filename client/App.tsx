@@ -5,7 +5,7 @@ import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -24,15 +24,19 @@ import AuthenticatedLayout from "./components/site/AuthenticatedLayout";
 
 const queryClient = new QueryClient();
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+function ProtectedLayout() {
   const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  return <>{children}</>;
+  return (
+    <AuthenticatedLayout>
+      <Outlet />
+    </AuthenticatedLayout>
+  );
 }
 
-function AdminRoute({ children }: { children: React.ReactNode }) {
+function AdminOnly() {
   const { isAuthenticated, isAdmin } = useAuth();
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -40,7 +44,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   if (!isAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
-  return <>{children}</>;
+  return <Outlet />;
 }
 
 const App = () => (
@@ -71,34 +75,14 @@ const App = () => (
             </Route>
 
             {/* Authenticated Dashboard Routes */}
-            <Route
-              element={
-                <ProtectedRoute>
-                  <AuthenticatedLayout>
-                    <div />
-                  </AuthenticatedLayout>
-                </ProtectedRoute>
-              }
-            >
+            <Route element={<ProtectedLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/complaints" element={<Complaint />} />
               <Route path="/dashboard/profile" element={<Profile />} />
-              <Route
-                path="/dashboard/admin"
-                element={
-                  <AdminRoute>
-                    <Admin />
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path="/dashboard/users"
-                element={
-                  <AdminRoute>
-                    <Users />
-                  </AdminRoute>
-                }
-              />
+              <Route element={<AdminOnly />}>
+                <Route path="/dashboard/admin" element={<Admin />} />
+                <Route path="/dashboard/users" element={<Users />} />
+              </Route>
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
