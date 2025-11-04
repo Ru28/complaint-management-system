@@ -87,10 +87,54 @@ export const login = async(req:any, res:any) => {
             },
             token
         })
-        
+
     } catch (error) {
         console.error("Login error:", error);
         return res
         .status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
+export const updateProfile = async(req:any, res:any) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({success: false, message: "Unauthorized"});
+        }
+
+        const { fullName, email, phoneNumber, address, city, state, pincode } = req.body;
+
+        const updateData: any = {};
+        if (fullName) updateData.fullName = fullName;
+        if (phoneNumber) updateData.phoneNumber = phoneNumber;
+        if (address) updateData.address = address;
+        if (city) updateData.city = city;
+        if (state) updateData.state = state;
+        if (pincode) updateData.pincode = pincode;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            updateData,
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({success: false, message: "User not found"});
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            user: {
+                id: updatedUser._id,
+                fullName: updatedUser.fullName,
+                email: updatedUser.email,
+                phoneNumber: updatedUser.phoneNumber,
+                role: updatedUser.role,
+            }
+        });
+    } catch (error) {
+        console.error("Update profile error:", error);
+        return res.status(500).json({success: false, message: "Internal server error"});
     }
 }
