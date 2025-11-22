@@ -7,6 +7,12 @@ type User = {
   id?: string;
   email?: string;
   phoneNumber?: string;
+  fullName?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  profileImageUrl?: string;
   role?: string;
 } | null;
 
