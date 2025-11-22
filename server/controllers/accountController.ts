@@ -108,6 +108,44 @@ export const login = async (req: any, res: any) => {
   }
 };
 
+export const getProfile = async (req: any, res: any) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        address: user.address || "",
+        city: user.city || "",
+        state: user.state || "",
+        pincode: user.pincode || "",
+        profileImageUrl: user.profileImageUrl || "",
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Get profile error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
 export const updateProfile = async (req: any, res: any) => {
   try {
     const userId = req.user?.id;
@@ -115,20 +153,22 @@ export const updateProfile = async (req: any, res: any) => {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    const { fullName, email, phoneNumber, address, city, state, pincode } =
+    const { fullName, phoneNumber, address, city, state, pincode, profileImageUrl } =
       req.body;
 
     const updateData: any = {};
     if (fullName) updateData.fullName = fullName;
     if (phoneNumber) updateData.phoneNumber = phoneNumber;
-    if (address) updateData.address = address;
-    if (city) updateData.city = city;
-    if (state) updateData.state = state;
-    if (pincode) updateData.pincode = pincode;
+    if (address !== undefined) updateData.address = address;
+    if (city !== undefined) updateData.city = city;
+    if (state !== undefined) updateData.state = state;
+    if (pincode !== undefined) updateData.pincode = pincode;
+    if (profileImageUrl) updateData.profileImageUrl = profileImageUrl;
+    updateData.updated = new Date();
 
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,
-    });
+    }).select("-password");
 
     if (!updatedUser) {
       return res
@@ -144,6 +184,11 @@ export const updateProfile = async (req: any, res: any) => {
         fullName: updatedUser.fullName,
         email: updatedUser.email,
         phoneNumber: updatedUser.phoneNumber,
+        address: updatedUser.address || "",
+        city: updatedUser.city || "",
+        state: updatedUser.state || "",
+        pincode: updatedUser.pincode || "",
+        profileImageUrl: updatedUser.profileImageUrl || "",
         role: updatedUser.role,
       },
     });
