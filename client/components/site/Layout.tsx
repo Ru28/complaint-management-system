@@ -80,6 +80,19 @@ function Header() {
                 </NavLink>
               </>
             ))}
+          {isAuthenticated && (
+            <NavLink
+              to="/dashboard/profile"
+              className={({ isActive }) =>
+                cn(
+                  "px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-foreground/80",
+                  isActive ? "text-primary" : "text-foreground/70",
+                )
+              }
+            >
+              Profile
+            </NavLink>
+          )}
           <NavLink
             to="/about"
             className={({ isActive }) =>
@@ -191,6 +204,20 @@ function Header() {
                   </NavLink>
                 </>
               ))}
+            {isAuthenticated && (
+              <NavLink
+                to="/dashboard/profile"
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    "px-2 py-2 rounded-md text-sm font-medium",
+                    isActive ? "text-primary" : "text-foreground/70",
+                  )
+                }
+              >
+                Profile
+              </NavLink>
+            )}
             {isAuthenticated ? (
               <Button
                 size="sm"
