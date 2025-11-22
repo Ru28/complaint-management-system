@@ -125,7 +125,9 @@ export default function Complaint() {
       <div className="flex items-center justify-between gap-4 pb-2">
         <div>
           <h1 className="text-3xl font-bold">Complaints</h1>
-          <p className="text-sm text-muted-foreground mt-2">Manage and track your complaints</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Manage and track your complaints
+          </p>
         </div>
         {!isAdmin && (
           <Button
