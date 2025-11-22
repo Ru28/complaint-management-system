@@ -64,22 +64,23 @@ export default function AuthenticatedLayout({
           <nav className="border-t bg-background">
             <div className="container mx-auto px-4 py-2 space-y-1">
               {tabs.map((tab) => (
-                <NavLink
-                  key={tab.path}
-                  to={tab.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    cn(
-                      "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-muted",
-                    )
-                  }
-                >
-                  {tab.label}
-                </NavLink>
-              ))}
+              <NavLink
+                key={tab.path}
+                to={tab.path}
+                end={tab.path === "/dashboard"}
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-muted",
+                  )
+                }
+              >
+                {tab.label}
+              </NavLink>
+            ))}
               <Button
                 size="sm"
                 className="w-full"
@@ -111,6 +112,7 @@ export default function AuthenticatedLayout({
               <NavLink
                 key={tab.path}
                 to={tab.path}
+                end={tab.path === "/dashboard"}
                 className={({ isActive }) =>
                   cn(
                     "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
