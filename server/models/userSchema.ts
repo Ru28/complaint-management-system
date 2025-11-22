@@ -7,6 +7,11 @@ interface IUser extends Document {
   phoneNumber: string;
   role: string;
   password: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  profileImageUrl?: string;
   updated: Date;
   created: Date;
 }
@@ -17,6 +22,11 @@ const userSchema = new mongoose.Schema<IUser>({
   phoneNumber: { type: String, required: true },
   role: { type: String, required: true },
   password: { type: String, required: true },
+  address: { type: String, default: "" },
+  city: { type: String, default: "" },
+  state: { type: String, default: "" },
+  pincode: { type: String, default: "" },
+  profileImageUrl: { type: String, default: "" },
   updated: { type: Date, default: Date.now },
   created: { type: Date, default: Date.now },
 });
