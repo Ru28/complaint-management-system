@@ -4,226 +4,320 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-const phoneRegex = /^[0-9+()\-\s]{7,20}$/;
-
-const schema = z.object({
-  fullName: z.string().min(2, "Enter your full name"),
-  email: z.string().email("Enter a valid email"),
-  phoneNumber: z
-    .string()
-    .regex(phoneRegex, "Enter a valid phone number")
-    .optional(),
-  address: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  pincode: z.string().optional(),
-});
-
-type FormData = z.infer<typeof schema>;
+interface ProfileData {
+  id?: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  profileImageUrl: string;
+  role?: string;
+}
 
 export default function Profile() {
-  const { user, token } = useAuth();
+  const { token, isAuthenticated, user, setAuth } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      fullName: user?.email?.split("@")[0] || "",
-      email: user?.email || "",
-      phoneNumber: user?.phoneNumber || "",
-      address: "",
-      city: "",
-      state: "",
-      pincode: "",
-    },
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+  const [profileData, setProfileData] = useState<ProfileData>({
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    profileImageUrl: "",
+  });
+  const [formData, setFormData] = useState<ProfileData>({
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    profileImageUrl: "",
   });
 
   useEffect(() => {
-    if (user) {
-      reset({
-        fullName: user?.email?.split("@")[0] || "",
-        email: user?.email || "",
-        phoneNumber: user?.phoneNumber || "",
-        address: "",
-        city: "",
-        state: "",
-        pincode: "",
-      });
+    if (isAuthenticated && token) {
+      fetchProfile();
     }
-  }, [user, reset]);
+  }, [isAuthenticated, token]);
 
-  const onSubmit = async (values: FormData) => {
+  const fetchProfile = async () => {
     try {
-      if (!token) {
-        toast.error("Not authenticated");
-        return;
-      }
-
       setLoading(true);
-      const res = await fetch("/api/accounts/update-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(values),
+      const res = await fetch("/api/account/profile", {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.message || "Failed to fetch profile");
 
-      const data = await res.json().catch(() => ({}) as any);
-      if (!res.ok) throw new Error(data?.message || `Failed (${res.status})`);
-
-      toast.success("Profile updated", {
-        description: "Your profile has been updated successfully",
-      });
-      setIsEditing(false);
+      const profileInfo = data.user;
+      setProfileData(profileInfo);
+      setFormData(profileInfo);
     } catch (e: any) {
-      toast.error("Update failed", {
-        description: e.message || "Something went wrong",
-      });
+      toast.error("Failed to load profile", { description: e.message });
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Profile</h1>
-        <Button
-          variant={isEditing ? "destructive" : "default"}
-          onClick={() => setIsEditing(!isEditing)}
-        >
-          {isEditing ? "Cancel" : "Edit Profile"}
-        </Button>
-      </div>
+  const handleInputChange = (field: keyof ProfileData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
-      <div className="max-w-2xl rounded-lg border bg-card p-6">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
-            <span className="text-2xl">👤</span>
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold">
-              {user?.email?.split("@")[0] || "User"}
-            </h2>
-            <p className="text-sm text-muted-foreground">{user?.email}</p>
-          </div>
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64String = e.target?.result as string;
+      setFormData((prev) => ({
+        ...prev,
+        profileImageUrl: base64String,
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSave = async () => {
+    try {
+      setUpdating(true);
+      const res = await fetch("/api/account/update-profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.message || "Failed to update profile");
+
+      toast.success("Profile updated successfully");
+      setProfileData(data.user);
+      setFormData(data.user);
+      setIsEditing(false);
+
+      setAuth(token, data.user);
+    } catch (e: any) {
+      toast.error("Update failed", { description: e.message });
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData(profileData);
+    setIsEditing(false);
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <section className="container mx-auto px-4 py-16">
+        <p className="text-muted-foreground">Please log in to view your profile.</p>
+      </section>
+    );
+  }
+
+  if (loading) {
+    return (
+      <section className="container mx-auto px-4 py-16">
+        <p className="text-muted-foreground">Loading profile...</p>
+      </section>
+    );
+  }
+
+  const initials = profileData.fullName
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase() || "U";
+
+  return (
+    <section className="container mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold">My Profile</h1>
+          {!isEditing && (
+            <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
+          )}
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input
-              id="fullName"
-              placeholder="Your full name"
-              {...register("fullName")}
-              disabled={!isEditing}
-            />
-            {errors.fullName && (
-              <p className="text-sm text-destructive mt-1">
-                {errors.fullName.message}
-              </p>
+        <div className="rounded-lg border bg-card p-6">
+          {/* Profile Picture Section */}
+          <div className="mb-8 flex flex-col items-center">
+            <Avatar className="w-24 h-24 mb-4">
+              <AvatarImage
+                src={formData.profileImageUrl || profileData.profileImageUrl}
+                alt={profileData.fullName}
+              />
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+            {isEditing && (
+              <div>
+                <Label htmlFor="profile-image" className="cursor-pointer">
+                  <span className="text-sm text-primary hover:underline">
+                    Change Photo
+                  </span>
+                </Label>
+                <Input
+                  id="profile-image"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                  disabled={updating}
+                />
+              </div>
             )}
           </div>
 
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="your@email.com"
-              {...register("email")}
-              disabled={!isEditing}
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive mt-1">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
+          {/* Profile Information */}
+          <div className="space-y-6">
+            {/* Full Name */}
+            <div className="grid gap-2">
+              <Label htmlFor="fullName">Full Name</Label>
+              {isEditing ? (
+                <Input
+                  id="fullName"
+                  value={formData.fullName}
+                  onChange={(e) => handleInputChange("fullName", e.target.value)}
+                  disabled={updating}
+                  placeholder="Enter your full name"
+                />
+              ) : (
+                <p className="text-sm py-2">{profileData.fullName}</p>
+              )}
+            </div>
 
-          <div>
-            <Label htmlFor="phoneNumber">Phone Number</Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              placeholder="+1 555 123 4567"
-              {...register("phoneNumber")}
-              disabled={!isEditing}
-            />
-            {errors.phoneNumber && (
-              <p className="text-sm text-destructive mt-1">
-                {errors.phoneNumber.message}
-              </p>
-            )}
-          </div>
+            {/* Email */}
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <p className="text-sm py-2">{profileData.email}</p>
+              <p className="text-xs text-muted-foreground">Email cannot be changed</p>
+            </div>
 
-          <div>
-            <Label htmlFor="address">Address</Label>
-            <Input
-              id="address"
-              placeholder="Your address"
-              {...register("address")}
-              disabled={!isEditing}
-            />
-          </div>
+            {/* Phone Number */}
+            <div className="grid gap-2">
+              <Label htmlFor="phoneNumber">Phone Number</Label>
+              {isEditing ? (
+                <Input
+                  id="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={(e) =>
+                    handleInputChange("phoneNumber", e.target.value)
+                  }
+                  disabled={updating}
+                  placeholder="Enter your phone number"
+                />
+              ) : (
+                <p className="text-sm py-2">{profileData.phoneNumber}</p>
+              )}
+            </div>
 
-          <div className="grid grid-cols-3 gap-3">
-            <div>
+            {/* Address */}
+            <div className="grid gap-2">
+              <Label htmlFor="address">Address</Label>
+              {isEditing ? (
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) => handleInputChange("address", e.target.value)}
+                  disabled={updating}
+                  placeholder="Enter your address"
+                />
+              ) : (
+                <p className="text-sm py-2">
+                  {profileData.address || "Not provided"}
+                </p>
+              )}
+            </div>
+
+            {/* City */}
+            <div className="grid gap-2">
               <Label htmlFor="city">City</Label>
-              <Input
-                id="city"
-                placeholder="City"
-                {...register("city")}
-                disabled={!isEditing}
-              />
+              {isEditing ? (
+                <Input
+                  id="city"
+                  value={formData.city}
+                  onChange={(e) => handleInputChange("city", e.target.value)}
+                  disabled={updating}
+                  placeholder="Enter your city"
+                />
+              ) : (
+                <p className="text-sm py-2">
+                  {profileData.city || "Not provided"}
+                </p>
+              )}
             </div>
-            <div>
-              <Label htmlFor="state">State</Label>
-              <Input
-                id="state"
-                placeholder="State"
-                {...register("state")}
-                disabled={!isEditing}
-              />
-            </div>
-            <div>
-              <Label htmlFor="pincode">Pincode</Label>
-              <Input
-                id="pincode"
-                placeholder="Pincode"
-                {...register("pincode")}
-                disabled={!isEditing}
-              />
-            </div>
-          </div>
 
-          {isEditing && (
-            <div className="flex gap-3 pt-4">
-              <Button type="submit" disabled={isSubmitting || loading}>
-                {isSubmitting || loading ? "Saving..." : "Save Changes"}
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setIsEditing(false)}
-              >
-                Cancel
-              </Button>
+            {/* State */}
+            <div className="grid gap-2">
+              <Label htmlFor="state">State</Label>
+              {isEditing ? (
+                <Input
+                  id="state"
+                  value={formData.state}
+                  onChange={(e) => handleInputChange("state", e.target.value)}
+                  disabled={updating}
+                  placeholder="Enter your state"
+                />
+              ) : (
+                <p className="text-sm py-2">
+                  {profileData.state || "Not provided"}
+                </p>
+              )}
             </div>
-          )}
-        </form>
+
+            {/* Pincode */}
+            <div className="grid gap-2">
+              <Label htmlFor="pincode">Pincode</Label>
+              {isEditing ? (
+                <Input
+                  id="pincode"
+                  value={formData.pincode}
+                  onChange={(e) => handleInputChange("pincode", e.target.value)}
+                  disabled={updating}
+                  placeholder="Enter your pincode"
+                />
+              ) : (
+                <p className="text-sm py-2">
+                  {profileData.pincode || "Not provided"}
+                </p>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            {isEditing && (
+              <div className="flex gap-2 justify-end pt-4">
+                <Button
+                  variant="secondary"
+                  onClick={handleCancel}
+                  disabled={updating}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleSave} disabled={updating}>
+                  {updating ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
