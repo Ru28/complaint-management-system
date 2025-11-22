@@ -95,7 +95,7 @@ export default function Profile() {
   const handleSave = async () => {
     try {
       setUpdating(true);
-      const res = await fetch("/api/account/update-profile", {
+      const res = await fetch("/api/accounts/update-profile", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
