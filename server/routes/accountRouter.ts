@@ -1,5 +1,10 @@
 import express from "express";
-import { login, signup, updateProfile, getProfile } from "../controllers/accountController";
+import {
+  login,
+  signup,
+  updateProfile,
+  getProfile,
+} from "../controllers/accountController";
 import { authVerify } from "../middleware/authVerify";
 
 const accountsRoutes = express.Router();

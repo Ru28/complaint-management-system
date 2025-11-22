@@ -127,7 +127,9 @@ export default function Profile() {
   if (!isAuthenticated) {
     return (
       <section className="container mx-auto px-4 py-16">
-        <p className="text-muted-foreground">Please log in to view your profile.</p>
+        <p className="text-muted-foreground">
+          Please log in to view your profile.
+        </p>
       </section>
     );
   }
@@ -140,11 +142,12 @@ export default function Profile() {
     );
   }
 
-  const initials = profileData.fullName
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase() || "U";
+  const initials =
+    profileData.fullName
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase() || "U";
 
   return (
     <section className="container mx-auto px-4 py-8">
@@ -194,7 +197,9 @@ export default function Profile() {
                 <Input
                   id="fullName"
                   value={formData.fullName}
-                  onChange={(e) => handleInputChange("fullName", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("fullName", e.target.value)
+                  }
                   disabled={updating}
                   placeholder="Enter your full name"
                 />
@@ -207,7 +212,9 @@ export default function Profile() {
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <p className="text-sm py-2">{profileData.email}</p>
-              <p className="text-xs text-muted-foreground">Email cannot be changed</p>
+              <p className="text-xs text-muted-foreground">
+                Email cannot be changed
+              </p>
             </div>
 
             {/* Phone Number */}

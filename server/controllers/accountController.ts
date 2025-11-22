@@ -61,12 +61,10 @@ export const login = async (req: any, res: any) => {
 
     // either require email OR phoneNumber
     if ((!email && !phoneNumber) || !password) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Email or PhoneNumber and password are required",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Email or PhoneNumber and password are required",
+      });
     }
 
     const user = await User.findOne({
@@ -153,8 +151,15 @@ export const updateProfile = async (req: any, res: any) => {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    const { fullName, phoneNumber, address, city, state, pincode, profileImageUrl } =
-      req.body;
+    const {
+      fullName,
+      phoneNumber,
+      address,
+      city,
+      state,
+      pincode,
+      profileImageUrl,
+    } = req.body;
 
     const updateData: any = {};
     if (fullName) updateData.fullName = fullName;
