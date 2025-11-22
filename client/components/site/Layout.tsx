@@ -204,6 +204,20 @@ function Header() {
                   </NavLink>
                 </>
               ))}
+            {isAuthenticated && (
+              <NavLink
+                to="/dashboard/profile"
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    "px-2 py-2 rounded-md text-sm font-medium",
+                    isActive ? "text-primary" : "text-foreground/70",
+                  )
+                }
+              >
+                Profile
+              </NavLink>
+            )}
             {isAuthenticated ? (
               <Button
                 size="sm"
