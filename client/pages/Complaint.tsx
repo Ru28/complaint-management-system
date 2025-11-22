@@ -121,19 +121,28 @@ export default function Complaint() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Complaints</h1>
+    <div className="space-y-8">
+      <div className="flex items-center justify-between gap-4 pb-2">
+        <div>
+          <h1 className="text-3xl font-bold">Complaints</h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Manage and track your complaints
+          </p>
+        </div>
         {!isAdmin && (
-          <Button onClick={() => setShowForm(!showForm)}>
+          <Button
+            onClick={() => setShowForm(!showForm)}
+            size="lg"
+            className="whitespace-nowrap"
+          >
             {showForm ? "Cancel" : "Create Complaint"}
           </Button>
         )}
       </div>
 
       {showForm && !isAdmin && (
-        <div className="rounded-lg border bg-card p-6">
-          <h2 className="text-xl font-bold mb-6">Create Complaint</h2>
+        <div className="rounded-lg border bg-card p-8 shadow-sm">
+          <h2 className="text-2xl font-bold mb-8">Create New Complaint</h2>
           <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
@@ -217,8 +226,8 @@ export default function Complaint() {
       )}
 
       {isAdmin && (
-        <div className="rounded-lg border bg-card p-4">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+        <div className="rounded-lg border bg-card p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-3">
             <input
               type="text"
               placeholder="Search title/description"
@@ -264,7 +273,7 @@ export default function Complaint() {
           </p>
         </div>
       ) : (
-        <div className="rounded-lg border bg-card overflow-x-auto">
+        <div className="rounded-lg border bg-card overflow-x-auto shadow-sm">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/50">

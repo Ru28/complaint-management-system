@@ -67,6 +67,7 @@ export default function AuthenticatedLayout({
                 <NavLink
                   key={tab.path}
                   to={tab.path}
+                  end={tab.path === "/dashboard"}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
                     cn(
@@ -111,6 +112,7 @@ export default function AuthenticatedLayout({
               <NavLink
                 key={tab.path}
                 to={tab.path}
+                end={tab.path === "/dashboard"}
                 className={({ isActive }) =>
                   cn(
                     "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
