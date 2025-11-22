@@ -54,7 +54,7 @@ export default function Profile() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/account/profile", {
+      const res = await fetch("/api/accounts/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json().catch(() => ({}));
