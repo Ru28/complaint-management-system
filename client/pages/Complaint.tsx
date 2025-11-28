@@ -306,7 +306,7 @@ export default function Complaint() {
                   <td className="py-3 px-4 text-xs text-muted-foreground">-</td>
                   {isAdmin && (
                     <td className="py-3 px-4 text-sm">
-                      {(c.firstName ?? "")} {(c.lastName ?? "")}
+                      {c.firstName ?? ""} {c.lastName ?? ""}
                     </td>
                   )}
                   <td className="py-3 px-4 text-xs">
