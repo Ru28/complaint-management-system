@@ -29,12 +29,12 @@ type FormData = z.infer<typeof schema>;
 
 interface ComplaintItem {
   _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  complaintDetail: string;
-  complaintStatus: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phoneNumber?: string;
+  complaintDetail?: string;
+  complaintStatus?: string;
   created: string;
   resolution?: { response?: string } | null;
 }
@@ -112,11 +112,13 @@ export default function Complaint() {
 
   const filteredComplaints = complaints.filter((c) => {
     const matchesSearch =
-      c.complaintDetail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.firstName.toLowerCase().includes(searchTerm.toLowerCase());
+      (c.complaintDetail ?? "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (c.firstName ?? "").toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === "All Status" ||
-      c.complaintStatus.toLowerCase() === statusFilter.toLowerCase();
+      (c.complaintStatus ?? "").toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
 
@@ -291,20 +293,20 @@ export default function Complaint() {
               {filteredComplaints.map((c) => (
                 <tr key={c._id} className="border-b hover:bg-muted/30">
                   <td className="py-3 px-4 text-primary font-semibold">
-                    {c._id.slice(0, 8)}
+                    {(c._id ?? "").slice(0, 8)}
                   </td>
                   <td className="py-3 px-4 text-primary max-w-xs">
-                    {c.complaintDetail.slice(0, 40)}
+                    {(c.complaintDetail ?? "").slice(0, 40)}
                   </td>
                   <td className="py-3 px-4">
                     <span className="px-2 py-1 rounded-full text-xs bg-secondary">
-                      {c.complaintStatus}
+                      {c.complaintStatus ?? "-"}
                     </span>
                   </td>
                   <td className="py-3 px-4 text-xs text-muted-foreground">-</td>
                   {isAdmin && (
                     <td className="py-3 px-4 text-sm">
-                      {c.firstName} {c.lastName}
+                      {c.firstName ?? ""} {c.lastName ?? ""}
                     </td>
                   )}
                   <td className="py-3 px-4 text-xs">
