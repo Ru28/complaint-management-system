@@ -112,7 +112,9 @@ export default function Complaint() {
 
   const filteredComplaints = complaints.filter((c) => {
     const matchesSearch =
-      (c.complaintDetail ?? "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.complaintDetail ?? "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       (c.firstName ?? "").toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === "All Status" ||
