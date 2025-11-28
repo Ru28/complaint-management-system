@@ -29,12 +29,12 @@ type FormData = z.infer<typeof schema>;
 
 interface ComplaintItem {
   _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  complaintDetail: string;
-  complaintStatus: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phoneNumber?: string;
+  complaintDetail?: string;
+  complaintStatus?: string;
   created: string;
   resolution?: { response?: string } | null;
 }
