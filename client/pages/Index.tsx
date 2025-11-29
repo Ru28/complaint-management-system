@@ -153,7 +153,7 @@ export default function Index() {
               <Label htmlFor="name">Full Name</Label>
               <Input
                 id="name"
-                placeholder="Rupesh Virani"
+                placeholder="Enter name"
                 {...register("name")}
               />
               {errors.name && (
